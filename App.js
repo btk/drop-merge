@@ -1,7 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Animated, Easing } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Animated, Easing, Image, SafeAreaView } from 'react-native';
 import * as Font from 'expo-font';
+
+import Header from './components/Header';
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -19,7 +21,8 @@ const colors = [
   "#3672ac",
   "#4f54a3",
   "#5a3359",
-  "#110e4b"
+  "#110e4b",
+  "#d8da54"
 ]
 
 export default class App extends React.Component {
@@ -63,11 +66,11 @@ export default class App extends React.Component {
   }
 
   chooseNext(){
-    let next = getRandomInt(1, 5);
+    let next = getRandomInt(1, 6);
     if(this.state.nextnext){
       this.setState({nextnext: next, next: this.state.nextnext, show: this.state.nextnext});
     }else{
-      let nextnext = getRandomInt(1, 5);
+      let nextnext = getRandomInt(1, 6);
       this.setState({nextnext: next, next: nextnext, show: nextnext});
     }
   }
@@ -142,6 +145,11 @@ export default class App extends React.Component {
     if(this.state.font){
       return (
         <View style={styles.container}>
+          <SafeAreaView style={{width: "100%"}}>
+            <Header/>
+            <StatusBar style="dark" />
+          </SafeAreaView>
+          <Image source={require("./assets/bg.jpg")} style={{width: "100%", height: 180, position: "absolute", bottom: 0}}/>
           <View style={styles.nextCarrier}>
             <Text>Next</Text>
             <View style={[styles.cell, {backgroundColor: this.state.nextnext ? colors[this.state.nextnext] : "#fff", width: "23%", transform: [{scale: 0.8}]}]}>
@@ -168,7 +176,7 @@ export default class App extends React.Component {
                       <View style={[styles.cell, {backgroundColor: row ? colors[row] : "#fff"}]} key={"cell"+column+"-"+i}>
                         {row != "" &&
                           <View style={styles.cellInner}>
-                            <Text style={styles.cellText}>{row}</Text>
+                            <Text style={styles.cellText}>{row == 10 ? "★" : row}</Text>
                           </View>
                         }
                       </View>
@@ -177,17 +185,23 @@ export default class App extends React.Component {
 
                   <Animated.View style={[styles.cell, {backgroundColor: this.state.show ? colors[this.state.show] : "#fff", position: "absolute", top: 5, left: 0, right: 0, opacity: this.state.dropAnim[column], transform: [{translateY: this.state.dropAnim[column]}]}]}>
                     <View style={styles.cellInner}>
-                      <Text style={styles.cellText}>{this.state.show}</Text>
+                      <Text style={styles.cellText}>{this.state.show == 10 ? "★" : this.state.show}</Text>
                     </View>
                   </Animated.View>
                 </TouchableOpacity>
               )
             })}
           </View>
+          <View style={styles.powerups}>
+            <TouchableOpacity style={styles.powerup}></TouchableOpacity>
+            <TouchableOpacity style={styles.powerup}></TouchableOpacity>
+            <TouchableOpacity style={styles.powerup}></TouchableOpacity>
+          </View>
+          <SafeAreaView></SafeAreaView>
         </View>
       );
     }else{
-      return null;
+      return <StatusBar style="dark" />;
     }
   }
 }
@@ -195,9 +209,9 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#fdd9cb',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
   nextCarrier: {
     width: Dimensions.get("window").width - 30,
@@ -207,14 +221,16 @@ const styles = StyleSheet.create({
   },
   game: {
     flexDirection: "row",
+    backgroundColor: "#fbf7ee",
+    borderRadius: 10,
     width: Dimensions.get("window").width - 30
   },
   column: {
     width: "25%",
     borderWidth: 2,
-    borderColor: "#fafafa",
+    borderColor: "#fbf7ee",
     backgroundColor:"#fff",
-    borderRadius: 7,
+    borderRadius: 10,
     paddingBottom: 5,
     paddingTop: 5,
   },
@@ -239,5 +255,18 @@ const styles = StyleSheet.create({
     fontFamily: "theboldfont",
     color: "#fff",
     fontSize: 16
+  },
+  powerups: {
+    width: "100%",
+    height: 150,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center"
+  },
+  powerup: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#fff",
+    borderRadius: 30
   }
 });
