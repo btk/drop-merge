@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Animated, Easing,
 import * as Font from 'expo-font';
 
 import Header from './components/Header';
+import API from './api';
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -99,14 +100,14 @@ export default class App extends React.Component {
       this.drop(this.state.dropAnim[column], 0, pushIndex);
       setTimeout(() => {
         this.setState({board});
-        this.merge(column);
+        this.merge(column, 0);
         this.chooseNext();
       }, 200);
     }
   }
 
 
-  merge(column){
+  merge(column, turn){
     setTimeout(() => {
       let board = this.state.board;
       let boardColumn = board[column];
@@ -121,6 +122,7 @@ export default class App extends React.Component {
 
             this.drop(this.state.dropAnim[column], pointer, pointer+1);
             this.setState({show: boardColumn[pointer+1]});
+            API.sound(turn);
             merged = true;
             break;
           }
@@ -131,7 +133,7 @@ export default class App extends React.Component {
       board[column] = boardColumn;
       this.setState({board});
       if(merged){
-        this.merge(column);
+        this.merge(column, turn+1);
       }else{
         this.touchable = true;
         this.setState({show: this.state.next});
